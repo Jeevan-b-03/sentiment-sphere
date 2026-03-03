@@ -1,0 +1,1295 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<!-- Full Height Container for Dashboard Content -->
+<div class="flex flex-col h-full gap-4">
+
+    <!-- TOP SECTION: Metrics & Graphs (Fixed Height) -->
+    <!-- Changed h-1/4 to h-48 (192px) to tighten the layout significantly -->
+    <div class="flex-none flex flex-col lg:flex-row gap-4 h-48 min-h-[160px]">
+
+        <!-- LEFT: Metrics (1/4 width) -->
+        <div class="w-full lg:w-1/4 h-full">
+            <div class="grid grid-cols-2 gap-3 h-full">
+                <!-- Total -->
+                <div
+                    class="bg-white dark:bg-dark-surface p-2 rounded-2xl shadow border dark:border-gray-700 flex flex-row h-full group hover:border-indigo-300 transition-colors gap-2">
+                    <!-- Left Side: Title & Icon -->
+                    <div class="w-1/2 flex flex-col justify-center items-center gap-1">
+                        <dt class="text-xs uppercase font-bold text-gray-400 dark:text-gray-500 tracking-wider">
+                            Total</dt>
+                        <div class="text-indigo-200 dark:text-indigo-900/30">
+                            <svg class="h-10 w-10" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Right Side: Value -->
+                    <div class="w-1/2 flex items-center justify-center">
+                        <dd class="text-3xl lg:text-4xl font-extrabold text-indigo-600 dark:text-indigo-400">{{ total }}
+                        </dd>
+                    </div>
+                </div>
+                <!-- Positive -->
+                <div
+                    class="bg-white dark:bg-dark-surface p-2 rounded-2xl shadow border-l-4 border-green-500 dark:border-green-500 border dark:border-t-gray-700 dark:border-r-gray-700 dark:border-b-gray-700 flex flex-row h-full group hover:bg-green-50/30 transition-colors gap-2">
+                    <div class="w-1/2 flex flex-col justify-center items-center gap-1">
+                        <dt class="text-xs uppercase font-bold text-gray-400 dark:text-gray-500 tracking-wider">
+                            Positive</dt>
+                        <div class="text-green-500/30 dark:text-green-400/20">
+                            <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="w-1/2 flex items-center justify-center">
+                        <dd class="text-3xl lg:text-4xl font-extrabold text-green-600 dark:text-green-400">{{ positive
+                            }}
+                        </dd>
+                    </div>
+                </div>
+                <!-- Neutral -->
+                <div
+                    class="bg-white dark:bg-dark-surface p-2 rounded-2xl shadow border-l-4 border-amber-500 dark:border-amber-500 border dark:border-t-gray-700 dark:border-r-gray-700 dark:border-b-gray-700 flex flex-row h-full group hover:bg-amber-50/30 transition-colors gap-2">
+                    <div class="w-1/2 flex flex-col justify-center items-center gap-1">
+                        <dt class="text-xs uppercase font-bold text-gray-400 dark:text-gray-500 tracking-wider">
+                            Neutral</dt>
+                        <div class="text-amber-500/30 dark:text-amber-400/20">
+                            <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 10h.01M15 10h.01M8 15h8M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="w-1/2 flex items-center justify-center">
+                        <dd class="text-3xl lg:text-4xl font-extrabold text-amber-500 dark:text-amber-400">{{ neutral }}
+                        </dd>
+                    </div>
+                </div>
+                <!-- Negative -->
+                <div
+                    class="bg-white dark:bg-dark-surface p-2 rounded-2xl shadow border-l-4 border-red-500 dark:border-red-500 border dark:border-t-gray-700 dark:border-r-gray-700 dark:border-b-gray-700 flex flex-row h-full group hover:bg-red-50/30 transition-colors gap-2">
+                    <div class="w-1/2 flex flex-col justify-center items-center gap-1">
+                        <dt class="text-xs uppercase font-bold text-gray-400 dark:text-gray-500 tracking-wider">
+                            Negative</dt>
+                        <div class="text-red-500/30 dark:text-red-400/20">
+                            <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="w-1/2 flex items-center justify-center">
+                        <dd class="text-3xl lg:text-4xl font-extrabold text-red-600 dark:text-red-400">{{ negative }}
+                        </dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Graphs (3/4 width) -->
+        <div class="w-full lg:w-3/4 h-full">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 h-full">
+                <div
+                    class="md:col-span-3 bg-white dark:bg-dark-surface p-3 rounded-2xl shadow border dark:border-gray-700 flex flex-col h-full overflow-hidden">
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="text-xs font-medium text-gray-700 dark:text-gray-300">Monthly Comments</h3>
+                    </div>
+                    <div class="flex flex-row flex-grow min-h-0 min-w-0">
+                        <!-- Radio Button Options -->
+                        <div
+                            class="flex flex-col border-r border-gray-100 dark:border-gray-700 mr-2 pr-2 gap-2 justify-center shrink-0">
+                            <!-- Set 1: Data Category -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="flex items-center gap-1.5 cursor-pointer group">
+                                    <input type="radio" name="monthlyDataType" value="total"
+                                        onchange="updateMonthlyChart()"
+                                        class="w-2.5 h-2.5 text-indigo-600 border-gray-300 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-800">
+                                    <span
+                                        class="text-[9px] font-bold text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 transition-colors whitespace-nowrap uppercase tracking-wider">Comments</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer group">
+                                    <input type="radio" name="monthlyDataType" value="sentiment"
+                                        onchange="updateMonthlyChart()" checked
+                                        class="w-2.5 h-2.5 text-indigo-600 border-gray-300 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-800">
+                                    <span
+                                        class="text-[9px] font-bold text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 transition-colors whitespace-nowrap uppercase tracking-wider">Sentiment</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer group">
+                                    <input type="radio" name="monthlyDataType" value="cases"
+                                        onchange="updateMonthlyChart()"
+                                        class="w-2.5 h-2.5 text-indigo-600 border-gray-300 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-800">
+                                    <span
+                                        class="text-[9px] font-bold text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 transition-colors whitespace-nowrap uppercase tracking-wider">Cases</span>
+                                </label>
+                            </div>
+
+                            <!-- Small Line Separator -->
+                            <div class="border-t border-gray-100 dark:border-gray-700 w-full mx-auto"></div>
+
+                            <!-- Set 2: Chart Type -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="flex items-center gap-1.5 cursor-pointer group">
+                                    <input type="radio" name="monthlyChartType" value="bar"
+                                        onchange="updateMonthlyChart()"
+                                        class="w-2.5 h-2.5 text-indigo-600 border-gray-300 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-800">
+                                    <span
+                                        class="text-[9px] font-bold text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 transition-colors whitespace-nowrap uppercase tracking-wider">Bar</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer group">
+                                    <input type="radio" name="monthlyChartType" value="line"
+                                        onchange="updateMonthlyChart()" checked
+                                        class="w-2.5 h-2.5 text-indigo-600 border-gray-300 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-800">
+                                    <span
+                                        class="text-[9px] font-bold text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 transition-colors whitespace-nowrap uppercase tracking-wider">Line</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex-grow relative w-full h-full min-h-0">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="md:col-span-2 bg-white dark:bg-dark-surface p-3 rounded-2xl shadow border dark:border-gray-700 flex flex-col h-full justify-between gap-2 overflow-hidden">
+
+                    <!-- Row 1: View Toggle (Full Width) -->
+                    <div class="flex bg-gray-100 dark:bg-gray-800 rounded p-1 gap-1 w-full">
+                        <a href="{{ url_for('index', from_date=request.args.get('from_date'), to_date=request.args.get('to_date'), sentiment=request.args.get('sentiment'), view='cards') }}"
+                            class="flex-1 px-2 py-2 text-xs font-bold rounded shadow-sm transition-all text-center flex items-center justify-center {{ 'bg-indigo-600 text-white' if active_view == 'cards' else 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700' }}">
+                            Comments
+                        </a>
+                        <a href="{{ url_for('index', from_date=request.args.get('from_date'), to_date=request.args.get('to_date'), sentiment=request.args.get('sentiment'), view='graphs') }}"
+                            class="flex-1 px-2 py-2 text-xs font-bold rounded transition-all text-center flex items-center justify-center {{ 'bg-indigo-600 text-white shadow-sm' if active_view == 'graphs' else 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700' }}">
+                            Dashboard
+                        </a>
+                    </div>
+
+                    <!-- Row 2: Sentiment Buttons (Full Width) -->
+                    <div class="grid grid-cols-4 gap-1 w-full">
+                        <a href="{{ url_for('index', from_date=request.args.get('from_date'), to_date=request.args.get('to_date'), view=active_view) }}"
+                            class="px-1 py-1.5 rounded text-[10px] font-bold transition-all border text-center flex items-center justify-center uppercase {{ 'bg-gray-800 text-white border-gray-800 dark:border-gray-600' if not request.args.get('sentiment') else 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-500' }}">
+                            All
+                        </a>
+                        <a href="{{ url_for('index', sentiment='positive', from_date=request.args.get('from_date'), to_date=request.args.get('to_date'), view=active_view) }}"
+                            class="px-1 py-1.5 rounded text-[10px] font-bold transition-all border text-center flex items-center justify-center uppercase {{ 'bg-green-600 text-white border-green-600' if request.args.get('sentiment') == 'positive' else 'bg-gray-50 dark:bg-gray-800 text-green-600 dark:text-green-400 border-green-200 dark:border-green-900/50 hover:border-green-300' }}">
+                            Positive
+                        </a>
+                        <a href="{{ url_for('index', sentiment='neutral', from_date=request.args.get('from_date'), to_date=request.args.get('to_date'), view=active_view) }}"
+                            class="px-1 py-1.5 rounded text-[10px] font-bold transition-all border text-center flex items-center justify-center uppercase {{ 'bg-amber-500 text-white border-amber-500' if request.args.get('sentiment') == 'neutral' else 'bg-gray-50 dark:bg-gray-800 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-900/50 hover:border-amber-300' }}">
+                            Neutral
+                        </a>
+                        <a href="{{ url_for('index', sentiment='negative', from_date=request.args.get('from_date'), to_date=request.args.get('to_date'), view=active_view) }}"
+                            class="px-1 py-1.5 rounded text-[10px] font-bold transition-all border text-center flex items-center justify-center uppercase {{ 'bg-red-600 text-white border-red-600' if request.args.get('sentiment') == 'negative' else 'bg-gray-50 dark:bg-gray-800 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/50 hover:border-red-300' }}">
+                            Negative
+                        </a>
+                    </div>
+
+                    <!-- Row 3: Date Range (Full Width) -->
+                    <form id="dateFilterForm" action="{{ url_for('index') }}" method="GET"
+                        class="flex items-center gap-1 w-full bg-gray-50 dark:bg-gray-800 p-1 rounded border border-gray-200 dark:border-gray-700">
+                        {% if request.args.get('sentiment') %}
+                        <input type="hidden" name="sentiment" value="{{ request.args.get('sentiment') }}">
+                        {% endif %}
+                        <input type="hidden" name="view" value="{{ active_view }}">
+
+                        <select name="time_range" id="timeRangeSelect" onchange="this.form.submit()"
+                            class="w-64 appearance-none px-2 py-1 text-xs font-bold bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-indigo-500 text-gray-700 dark:text-gray-200 cursor-pointer shadow-sm">
+                            <option value="ytd" {% if time_range=='ytd' %}selected{% endif %}>Year To Date</option>
+                            <option value="6m" {% if time_range=='6m' %}selected{% endif %}>Roll back 6 months</option>
+                            <option value="12m" {% if time_range=='12m' %}selected{% endif %}>Roll back 12 months
+                            </option>
+                        </select>
+
+                        <div id="customDateInputs" class="flex items-center gap-1">
+                            <input type="date" name="from_date" value="{{ request.args.get('from_date', '') }}"
+                                class="w-24 min-w-0 px-1 py-0.5 text-[10px] font-medium bg-transparent border-none focus:ring-0 text-gray-700 dark:text-gray-200">
+                            <span class="text-gray-400 text-[10px] font-bold">-</span>
+                            <input type="date" name="to_date" value="{{ request.args.get('to_date', '') }}"
+                                class="w-24 min-w-0 px-1 py-0.5 text-[10px] font-medium bg-transparent border-none focus:ring-0 text-gray-700 dark:text-gray-200">
+                        </div>
+
+                        <div class="flex items-center gap-0.5 flex-none">
+                            <button type="submit" id="dateSubmitBtn"
+                                class="p-1.5 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                            {% if request.args.get('from_date') or request.args.get('to_date') %}
+                            <a href="{{ url_for('index', sentiment=request.args.get('sentiment'), view=active_view, time_range='6m') }}"
+                                class="p-1 text-gray-400 hover:text-gray-600 transition-colors" title="Reset Dates">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </form>
+
+                    <!-- Row 4: Status + Reports (Split) -->
+                    <div class="flex gap-2 w-full">
+                        <!-- Status Dropdown (2/3) -->
+                        <div class="flex-[2] relative">
+                            <form action="{{ url_for('index') }}" method="GET" class="w-full h-full">
+                                <input type="hidden" name="view" value="{{ active_view }}">
+                                {% if request.args.get('sentiment') %}
+                                <input type="hidden" name="sentiment" value="{{ request.args.get('sentiment') }}">
+                                {% endif %}
+                                {% if request.args.get('from_date') %}
+                                <input type="hidden" name="from_date" value="{{ request.args.get('from_date') }}">
+                                {% endif %}
+                                {% if request.args.get('to_date') %}
+                                <input type="hidden" name="to_date" value="{{ request.args.get('to_date') }}">
+                                {% endif %}
+                                <div class="relative h-full">
+                                    <select name="status" onchange="this.form.submit()"
+                                        class="w-full h-full appearance-none pl-3 pr-6 py-2 text-xs font-bold bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer uppercase">
+                                        <option value="" {% if not request.args.get('status') %}selected{% endif %}>All
+                                            Cases</option>
+                                        <option value="completed" {% if request.args.get('status')=='completed'
+                                            %}selected{% endif %}>Completed</option>
+                                        <option value="pending" {% if request.args.get('status')=='pending' %}selected{%
+                                            endif %}>Pending</option>
+                                    </select>
+                                    <div
+                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-500">
+                                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Reports Button (1/3) -->
+                        <a href="{{ url_for('download_csv') }}"
+                            class="flex-1 flex items-center justify-center gap-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded transition-all shadow-sm">
+                            <span class="text-xs font-bold uppercase tracking-wide">Reports</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Separator Line -->
+    <div class="flex-none px-4">
+        <div class="border-b border-gray-200 dark:border-gray-700"></div>
+    </div>
+
+    <!-- BOTTOM SECTION: Controls & Comment List (Flex Grow) -->
+    <div class="flex-grow flex flex-col min-h-0 gap-4">
+
+        <form id="refreshForm" action="{{ url_for('fetch_comments_route') }}" method="POST" class="hidden"></form>
+
+        <!-- Comments Grid (Cards View) -->
+        <div id="cardsView"
+            class="{{ 'hidden' if active_view == 'graphs' else '' }} flex-grow overflow-y-auto p-1 relative">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-20">
+                {% for comment in comments %}
+                <div
+                    class="bg-white dark:bg-dark-surface rounded-xl shadow-md border dark:border-gray-700 flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300 h-40">
+                    <!-- Top Panel: Colored Header with User & Facebook Icon -->
+                    <div class="px-3 py-2 flex justify-between items-center flex-none
+                        {% if comment.sentiment == 'positive' %} bg-green-100 dark:bg-green-900/30 
+                        {% elif comment.sentiment == 'negative' %} bg-red-100 dark:bg-red-900/30 
+                        {% else %} bg-amber-100 dark:bg-amber-900/30 {% endif %}">
+                        <h3
+                            class="text-sm font-bold truncate pr-2 flex items-center gap-1.5 {% if comment.sentiment == 'positive' %} text-green-700 dark:text-green-300 {% elif comment.sentiment == 'negative' %} text-red-700 dark:text-red-300 {% else %} text-amber-700 dark:text-amber-300 {% endif %}">
+                            {{ comment.username or 'Unknown User' }}
+                            {% if comment.username != 'David Wilson' %}
+                            <svg class="h-5 w-5 flex-none {% if comment.is_salesforce_user %} text-indigo-600 dark:text-indigo-400 {% else %} text-gray-400 opacity-50 {% endif %}"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            {% endif %}
+                        </h3>
+                        <a href="{{ comment.permalink_url or '#' }}" target="_blank"
+                            class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex-none"
+                            title="View on Facebook">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.35c-.538 0-.65.221-.65.778v1.222h2l-.209 2h-1.791v7h-3v-7h-2v-2h2v-2.308c0-1.769 1.079-2.692 3.35-2.692 1.089 0 1.87.081 2.15.117v2.177z" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="px-3 pt-2 flex-grow overflow-hidden relative">
+                        <!-- Message (Fixed container for 3 lines) -->
+                        <div class="relative h-[48px] overflow-hidden">
+                            <p class="text-xs text-gray-700 dark:text-gray-300 break-words leading-tight line-clamp-3">
+                                {{ comment.message }}
+                            </p>
+                            {% if comment.message|length > 80 %}
+                            <div class="absolute bottom-0 right-0 bg-white dark:bg-dark-surface pl-1 flex items-center">
+                                <span class="text-gray-400 text-[10px] mr-0.5">...</span>
+                                <a href="{{ comment.permalink_url or '#' }}" target="_blank"
+                                    class="text-[10px] text-blue-500 hover:underline font-bold">more</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Footer: Status & Action -->
+                    <div
+                        class="bg-gray-50 dark:bg-gray-800/50 px-2 py-1.5 border-t dark:border-gray-700 flex justify-between items-center mt-auto">
+                        <!-- Bottom Left: Timestamp (Pending) or Case Details (Acknowledged) -->
+                        <div>
+                            {% if comment.status == 'Acknowledged' %}
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-gray-700 dark:text-gray-300">
+                                    {{ comment.associate_name }}
+                                </span>
+                                <span class="text-[10px] text-gray-500">
+                                    {% if comment.case_number %}Case #{{ comment.case_number }}{% else %}{{
+                                    comment.action_taken }}{% endif %}
+                                </span>
+                            </div>
+                            {% else %}
+                            <span class="text-xs text-gray-500 font-mono">{{ comment.timestamp.strftime('%d/%m %H:%M')
+                                }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Bottom Right: Pending Button or Acknowledged Text -->
+                        <div class="flex items-center gap-1.5">
+                            {% if comment.status != 'Acknowledged' %}
+                            <div class="flex items-center gap-1.5 mr-0.5">
+                                {% if not comment.replied %}
+                                <form action="{{ url_for('manual_reply', comment_id=comment.id) }}" method="POST">
+                                    <button type="submit" title="Send Auto-Reply"
+                                        class="p-1 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                            <path d="m10 8-3 3 3 3" />
+                                            <path d="M7 11h7a2 2 0 0 1 2 2v2" />
+                                        </svg>
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span title="Replied to Facebook" class="p-1 text-green-500">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                        <path d="m10 8-3 3 3 3" />
+                                        <path d="M7 11h7a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                </span>
+                                {% endif %}
+                                <svg class="h-4 w-4 text-green-500 cursor-pointer hover:text-green-600"
+                                    fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 10.133a.5.5 0 00-.8.2V10.333z" />
+                                </svg>
+                                <svg class="h-4 w-4 text-red-500 cursor-pointer hover:text-red-600" fill="currentColor"
+                                    viewBox="0 0 20 20">
+                                    <path
+                                        d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.106-1.79l-.05-.025A4 4 0 0011.057 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-2.133a.5.5 0 00.8-.2V9.667z" />
+                                </svg>
+                            </div>
+                            <button onclick="openAckModal('{{ comment.id }}')"
+                                class="inline-flex items-center px-1.5 py-0.5 border border-transparent text-[10px] font-bold uppercase tracking-wide rounded text-white bg-gray-600 hover:bg-gray-700 transition-colors shadow-sm">
+                                Pending
+                            </button>
+                            {% else %}
+                            <span
+                                class="inline-flex items-center px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide rounded text-white bg-green-600 shadow-sm">
+                                DONE
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-span-full py-12 text-center text-gray-500">No comments found.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Graphs View -->
+        <div id="graphsView"
+            class="{{ 'hidden' if active_view != 'graphs' else '' }} flex-grow overflow-y-auto p-1 relative flex flex-col gap-4">
+            <!-- GIF centered below the separator -->
+            <div class="flex justify-center px-4 w-full">
+                <div class="h-20 w-auto flex items-center justify-center">
+                    <img src="{{ url_for('static', filename='img/IN PROGRESS.gif') }}" alt="In Progress"
+                        class="h-full w-auto object-contain invert hue-rotate-180 mix-blend-multiply dark:invert-0 dark:hue-rotate-0 dark:mix-blend-screen">
+                </div>
+            </div>
+            <!-- Grid Deck (3 Columns: Monthly Comments, Incoming Cases, Associate) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full overflow-hidden grow">
+                <!-- Col 1: Monthly Comments -->
+                <div
+                    class="bg-white dark:bg-dark-surface p-3 rounded-2xl shadow border dark:border-gray-700 flex flex-col h-full overflow-hidden">
+                    <h3 class="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Monthly Comments</h3>
+                    <div class="flex-grow relative w-full h-full min-h-0">
+                        <canvas id="bottomMonthlyCommentsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Col 2: Total Incoming Cases -->
+                <div
+                    class="bg-white dark:bg-dark-surface p-3 rounded-2xl shadow border dark:border-gray-700 flex flex-col h-full overflow-hidden">
+                    <h3 class="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Total Incoming Cases</h3>
+                    <div class="flex-grow relative w-full h-full min-h-0">
+                        <canvas id="bottomIncomingCasesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Col 3: Associate Performance -->
+                <div
+                    class="bg-white dark:bg-dark-surface p-3 rounded-2xl shadow border dark:border-gray-700 flex flex-col h-full overflow-hidden">
+                    <h3 class="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Associate Performance</h3>
+                    <div class="flex-grow relative w-full h-full min-h-0">
+                        <canvas id="associateTreemap"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WordCloud2.js & Treemap Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-treemap@2.3.0/dist/chartjs-chart-treemap.min.js"></script>
+
+<script>
+    // Initialize on Load
+    // Initialize on Load (Wait for full page load including styles)
+    window.addEventListener('load', () => {
+        // Toggle Case Input (Ack Modal) helper check
+        if (typeof toggleCaseInput === 'function') toggleCaseInput();
+    });
+</script>
+
+<!-- Acknowledge Modal -->
+<div id="ackModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+            onclick="closeAckModal()"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div
+            class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+            <form id="ackForm" method="POST">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div
+                            class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
+                                Acknowledge Comment
+                            </h3>
+                            <div class="mt-4 space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Action
+                                        Taken</label>
+                                    <select name="action_taken" id="actionTakenInput" onchange="toggleCaseInput()"
+                                        required
+                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="Case Logged">Case Logged</option>
+                                        <option value="User Not Found">User Not Found</option>
+                                    </select>
+                                </div>
+                                <div id="caseInputGroup">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Case
+                                        Number</label>
+                                    <input type="text" name="case_number" id="caseNumberInput"
+                                        placeholder="Enter Case ID"
+                                        class="mt-1 flex-1 block w-full min-w-0 rounded-md sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 p-2 border">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Submit
+                    </button>
+                    <button type="button" onclick="closeAckModal()"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openAckModal(commentId) {
+        const modal = document.getElementById('ackModal');
+        const form = document.getElementById('ackForm');
+        // Set the action URL dynamically
+        form.action = `/create_case/${commentId}`;
+        modal.classList.remove('hidden');
+    }
+
+    function closeAckModal() {
+        document.getElementById('ackModal').classList.add('hidden');
+    }
+
+    function toggleCaseInput() {
+        const action = document.getElementById('actionTakenInput').value;
+        const caseGroup = document.getElementById('caseInputGroup');
+        const caseInput = document.getElementById('caseNumberInput');
+
+        if (action === 'Case Logged') {
+            caseGroup.classList.remove('hidden');
+            caseInput.required = true;
+        } else {
+            caseGroup.classList.add('hidden');
+            caseInput.required = false;
+        }
+    }
+
+    function toggleCustomDates() {
+        // Deprecated: Custom dates are always visible now. 
+        // Keeping empty function just in case typical JS errors.
+    }
+
+    // Initialize state
+    document.addEventListener('DOMContentLoaded', () => {
+        toggleCaseInput();
+    });
+</script>
+
+<script id="comments-data" type="application/json">
+    {{ comments_json | tojson }}
+</script>
+<script id="user-activity-data" type="application/json">
+    {{ user_activity_data | tojson }}
+</script>
+<script id="associate-data" type="application/json">
+    {{ associate_data | tojson }}
+</script>
+<script>
+    const filterFromDate = "{{ calculated_from_date }}";
+    const filterToDate = "{{ calculated_to_date }}";
+    const rawComments = JSON.parse(document.getElementById('comments-data').textContent);
+
+    // Utility to determine chart scale (Daily vs Monthly)
+    function getScale() {
+        const now = new Date();
+        let start, end;
+
+        if (filterFromDate && filterToDate) {
+            start = new Date(filterFromDate);
+            end = new Date(filterToDate);
+        } else if (filterFromDate) {
+            start = new Date(filterFromDate);
+            end = now;
+        } else if (filterToDate) {
+            start = new Date(rawComments.length > 0 ? rawComments[rawComments.length - 1].timestamp : now);
+            end = new Date(filterToDate);
+        } else {
+            // Default: 12 months of current year
+            const currentYear = now.getFullYear();
+            const labels = [];
+            for (let i = 1; i <= 12; i++) {
+                labels.push(`${currentYear}-${String(i).padStart(2, '0')}`);
+            }
+            return { type: 'monthly', labels: labels };
+        }
+
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays <= 45) {
+            // Daily Scale
+            const labels = [];
+            let current = new Date(start);
+            while (current <= end) {
+                labels.push(current.toISOString().split('T')[0]);
+                current.setDate(current.getDate() + 1);
+            }
+            return { type: 'daily', labels: labels };
+        } else {
+            // Monthly Scale
+            const labels = [];
+            let current = new Date(start.getFullYear(), start.getMonth(), 1);
+            while (current <= end) {
+                labels.push(current.toISOString().substring(0, 7));
+                current.setMonth(current.getMonth() + 1);
+            }
+            return { type: 'monthly', labels: labels };
+        }
+    }
+
+    // Data Processing Functions
+    function processMonthlyTotal() {
+        const scale = getScale();
+        const counts = {};
+        scale.labels.forEach(l => counts[l] = 0);
+
+        rawComments.forEach(c => {
+            const key = scale.type === 'daily' ? c.timestamp.substring(0, 10) : c.timestamp.substring(0, 7);
+            if (counts.hasOwnProperty(key)) {
+                counts[key]++;
+            }
+        });
+
+        return {
+            labels: scale.labels,
+            data: scale.labels.map(l => counts[l])
+        };
+    }
+
+    function processMonthlySentiment() {
+        const scale = getScale();
+        const counts = {};
+        scale.labels.forEach(l => counts[l] = { positive: 0, negative: 0, neutral: 0 });
+
+        rawComments.forEach(c => {
+            const key = scale.type === 'daily' ? c.timestamp.substring(0, 10) : c.timestamp.substring(0, 7);
+            if (counts.hasOwnProperty(key)) {
+                if (c.sentiment === 'positive') counts[key].positive++;
+                else if (c.sentiment === 'negative') counts[key].negative++;
+                else counts[key].neutral++;
+            }
+        });
+
+        return {
+            labels: scale.labels,
+            positive: scale.labels.map(l => counts[l].positive),
+            negative: scale.labels.map(l => counts[l].negative),
+            neutral: scale.labels.map(l => counts[l].neutral)
+        };
+    }
+
+    function processMonthlyCases() {
+        const scale = getScale();
+        const counts = {};
+        scale.labels.forEach(l => counts[l] = { total: 0, logged: 0 });
+
+        rawComments.forEach(c => {
+            const key = scale.type === 'daily' ? c.timestamp.substring(0, 10) : c.timestamp.substring(0, 7);
+            if (counts.hasOwnProperty(key)) {
+                counts[key].total++;
+                if (c.status === 'Acknowledged') {
+                    counts[key].logged++;
+                }
+            }
+        });
+
+        return {
+            labels: scale.labels,
+            total: scale.labels.map(l => counts[l].total),
+            logged: scale.labels.map(l => counts[l].logged)
+        };
+    }
+
+
+
+    function processDistribution() {
+        const counts = { 'positive': 0, 'negative': 0, 'neutral': 0 };
+        rawComments.forEach(c => {
+            if (counts[c.sentiment] !== undefined) counts[c.sentiment]++;
+        });
+        return [counts['positive'], counts['negative'], counts['neutral']];
+    }
+
+    // Prepare Data
+    const monthlyData = processMonthlyTotal();
+    const monthlySentimentData = processMonthlySentiment();
+    const monthlyCasesData = processMonthlyCases();
+
+    const distData = processDistribution();
+    const userActivityData = JSON.parse(document.getElementById('user-activity-data').textContent);
+    const associateData = JSON.parse(document.getElementById('associate-data').textContent);
+
+    // Chart 1: Monthly Total Comments (Bar/Line - Dynamic)
+    let monthlyChartInstance = null;
+
+    function createMonthlyChart(dataType, chartType) {
+        const canvas = document.getElementById('monthlyChart');
+        if (!canvas) return;
+
+        // Destroy existing chart if it exists
+        if (monthlyChartInstance) {
+            monthlyChartInstance.destroy();
+        }
+
+        let config;
+
+        if (dataType === 'sentiment') {
+            // Sentiment Trend - Can be line or bar chart
+            if (chartType === 'line') {
+                config = {
+                    type: 'line',
+                    data: {
+                        labels: monthlySentimentData.labels,
+                        datasets: [
+                            {
+                                label: 'Positive',
+                                data: monthlySentimentData.positive,
+                                backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                                borderColor: '#16A34A',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: '#16A34A',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            },
+                            {
+                                label: 'Negative',
+                                data: monthlySentimentData.negative,
+                                backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                                borderColor: '#DC2626',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: '#DC2626',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            },
+                            {
+                                label: 'Neutral',
+                                data: monthlySentimentData.neutral,
+                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                borderColor: '#F59E0B',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: '#F59E0B',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                align: 'end',
+                                labels: {
+                                    boxWidth: 8,
+                                    font: { size: 9 },
+                                    color: '#6B7280',
+                                    usePointStyle: true
+                                }
+                            },
+                            datalabels: { display: false }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#6B7280' } },
+                            y: { beginAtZero: true, grid: { borderDash: [5, 5] }, ticks: { font: { size: 9 }, color: '#6B7280' } }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                };
+            } else {
+                // Bar chart - grouped bars
+                config = {
+                    type: 'bar',
+                    data: {
+                        labels: monthlySentimentData.labels,
+                        datasets: [
+                            {
+                                label: 'Positive',
+                                data: monthlySentimentData.positive,
+                                backgroundColor: '#16A34A',
+                                borderRadius: 4,
+                                borderWidth: 0
+                            },
+                            {
+                                label: 'Negative',
+                                data: monthlySentimentData.negative,
+                                backgroundColor: '#DC2626',
+                                borderRadius: 4,
+                                borderWidth: 0
+                            },
+                            {
+                                label: 'Neutral',
+                                data: monthlySentimentData.neutral,
+                                backgroundColor: '#F59E0B',
+                                borderRadius: 4,
+                                borderWidth: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                align: 'end',
+                                labels: {
+                                    boxWidth: 8,
+                                    font: { size: 9 },
+                                    color: '#6B7280'
+                                }
+                            },
+                            datalabels: {
+                                color: '#fff',
+                                anchor: 'center',
+                                align: 'center',
+                                font: { size: 8, weight: 'bold' },
+                                formatter: v => v > 0 ? v : ''
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#6B7280' } },
+                            y: { beginAtZero: true, grid: { borderDash: [5, 5] }, ticks: { font: { size: 9 }, color: '#6B7280' } }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                };
+            }
+        } else if (dataType === 'cases') {
+            // Case Tracking - Can be bar or line
+            if (chartType === 'line') {
+                config = {
+                    type: 'line',
+                    data: {
+                        labels: monthlyCasesData.labels,
+                        datasets: [
+                            {
+                                label: 'Total Incoming',
+                                data: monthlyCasesData.total,
+                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                borderColor: '#6366F1',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: '#6366F1',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            },
+                            {
+                                label: 'Cases Logged',
+                                data: monthlyCasesData.logged,
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderColor: '#10B981',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: '#10B981',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                align: 'end',
+                                labels: {
+                                    boxWidth: 8,
+                                    font: { size: 9 },
+                                    color: '#6B7280'
+                                }
+                            },
+                            datalabels: { display: false }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#6B7280' } },
+                            y: { beginAtZero: true, grid: { borderDash: [5, 5] }, ticks: { font: { size: 9 }, color: '#6B7280' } }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                };
+            } else {
+                // Bar chart
+                config = {
+                    type: 'bar',
+                    data: {
+                        labels: monthlyCasesData.labels,
+                        datasets: [
+                            {
+                                label: 'Total Incoming',
+                                data: monthlyCasesData.total,
+                                backgroundColor: '#6366F1',
+                                borderRadius: 4,
+                                borderWidth: 0
+                            },
+                            {
+                                label: 'Cases Logged',
+                                data: monthlyCasesData.logged,
+                                backgroundColor: '#10B981',
+                                borderRadius: 4,
+                                borderWidth: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                align: 'end',
+                                labels: {
+                                    boxWidth: 8,
+                                    font: { size: 9 },
+                                    color: '#6B7280'
+                                }
+                            },
+                            datalabels: {
+                                color: '#6B7280',
+                                anchor: 'end',
+                                align: 'top',
+                                font: { size: 8, weight: 'bold' },
+                                formatter: v => v > 0 ? v : ''
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#6B7280' } },
+                            y: { beginAtZero: true, grid: { borderDash: [5, 5] }, ticks: { font: { size: 9 }, color: '#6B7280' } }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                };
+            }
+        } else {
+            // Monthly Comments (total) - Bar or Line chart
+            config = {
+                type: chartType,
+                data: {
+                    labels: monthlyData.labels,
+                    datasets: [{
+                        data: monthlyData.data,
+                        backgroundColor: chartType === 'bar' ? '#6366F1' : 'rgba(99, 102, 241, 0.1)',
+                        borderColor: '#6366F1',
+                        borderWidth: chartType === 'line' ? 2 : 0,
+                        borderRadius: chartType === 'bar' ? 4 : 0,
+                        fill: false,
+                        tension: chartType === 'line' ? 0.4 : 0,
+                        pointBackgroundColor: '#6366F1',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: chartType === 'line' ? 4 : 0,
+                        pointHoverRadius: chartType === 'line' ? 6 : 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            color: '#6B7280',
+                            anchor: 'end',
+                            align: 'top',
+                            font: { size: 9, weight: 'bold' },
+                            formatter: v => v > 0 ? v : ''
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#6B7280' } },
+                        y: { beginAtZero: true, grid: { borderDash: [5, 5] }, ticks: { font: { size: 9 }, color: '#6B7280' } }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            };
+        }
+
+        monthlyChartInstance = new Chart(canvas, config);
+    }
+
+    function updateMonthlyChart() {
+        const dataType = document.querySelector('input[name="monthlyDataType"]:checked').value;
+        const chartType = document.querySelector('input[name="monthlyChartType"]:checked').value;
+        createMonthlyChart(dataType, chartType);
+    }
+
+    // Initialize with default: Sentiment Trend as Line chart
+    if (document.getElementById('monthlyChart')) {
+        createMonthlyChart('sentiment', 'line');
+    }
+
+
+
+    // Chart 3: Distribution (Pie) - RESTORED
+    if (document.getElementById('distChart')) {
+        new Chart(document.getElementById('distChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Pos', 'Neg', 'Neu'],
+                datasets: [{
+                    data: distData,
+                    backgroundColor: ['#16A34A', '#DC2626', '#F59E0B'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 8, font: { size: 9 }, color: '#6B7280' } },
+                    datalabels: {
+                        color: 'white',
+                        font: { weight: 'bold', size: 10 },
+                        formatter: (val, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => { sum += data; });
+                            let percentage = (val * 100 / sum).toFixed(0) + "%";
+                            return ctx.chart.data.labels[ctx.dataIndex] + '\n' + percentage;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    // Bottom Section: Monthly Comments Chart
+    if (document.getElementById('bottomMonthlyCommentsChart')) {
+        const currentMonthlySentimentData = processMonthlySentiment();
+        new Chart(document.getElementById('bottomMonthlyCommentsChart'), {
+            type: 'bar',
+            data: {
+                labels: currentMonthlySentimentData.labels,
+                datasets: [
+                    {
+                        label: 'Positive',
+                        data: currentMonthlySentimentData.positive,
+                        backgroundColor: '#10B981', // green
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Neutral',
+                        data: currentMonthlySentimentData.neutral,
+                        backgroundColor: '#F59E0B', // amber
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Negative',
+                        data: currentMonthlySentimentData.negative,
+                        backgroundColor: '#EF4444', // red
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: { boxWidth: 8, font: { size: 9 }, color: '#6B7280' }
+                    },
+                    datalabels: {
+                        display: true,
+                        labels: {
+                            value: {
+                                color: 'white', anchor: 'center', align: 'center',
+                                font: { size: 8, weight: 'bold' },
+                                formatter: v => v > 0 ? v : ''
+                            },
+                            total: {
+                                color: '#111827', anchor: 'end', align: 'top', offset: 2,
+                                font: { size: 9, weight: 'bold' },
+                                formatter: (val, ctx) => {
+                                    if (ctx.datasetIndex === ctx.chart.data.datasets.length - 1) {
+                                        let sum = 0;
+                                        ctx.chart.data.datasets.forEach(ds => { sum += ds.data[ctx.dataIndex]; });
+                                        return sum > 0 ? sum : '';
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    }
+                },
+                layout: { padding: { top: 15 } },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: { display: false },
+                        ticks: { font: { size: 9 }, color: '#6B7280' }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5] },
+                        ticks: { font: { size: 9 }, color: '#6B7280' }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    // Bottom Section: Total Incoming Cases Chart
+    if (document.getElementById('bottomIncomingCasesChart')) {
+        const currentMonthlyCasesData = processMonthlyCases();
+        // Calculate pending cases for each month/day (Total - Logged)
+        const pendingData = currentMonthlyCasesData.total.map((t, i) => t - currentMonthlyCasesData.logged[i]);
+
+        new Chart(document.getElementById('bottomIncomingCasesChart'), {
+            type: 'bar',
+            data: {
+                labels: currentMonthlyCasesData.labels,
+                datasets: [
+                    {
+                        label: 'Logged',
+                        data: currentMonthlyCasesData.logged,
+                        backgroundColor: '#10B981', // Green
+                        borderRadius: 4,
+                        stack: 'stack1'
+                    },
+                    {
+                        label: 'Pending',
+                        data: pendingData,
+                        backgroundColor: '#6366F1', // Indigo
+                        borderRadius: 4,
+                        stack: 'stack1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: { boxWidth: 8, font: { size: 9 }, color: '#6B7280' }
+                    },
+                    datalabels: {
+                        display: true,
+                        labels: {
+                            // Value inside segments
+                            value: {
+                                color: 'white',
+                                anchor: 'center',
+                                align: 'center',
+                                font: { size: 8, weight: 'bold' },
+                                formatter: v => v > 0 ? v : ''
+                            },
+                            // Total above the bar
+                            total: {
+                                color: '#111827',
+                                anchor: 'end',
+                                align: 'top',
+                                offset: 2,
+                                font: { size: 9, weight: 'bold' },
+                                formatter: (val, ctx) => {
+                                    if (ctx.datasetIndex === ctx.chart.data.datasets.length - 1) {
+                                        let sum = 0;
+                                        ctx.chart.data.datasets.forEach(ds => {
+                                            sum += ds.data[ctx.dataIndex];
+                                        });
+                                        return sum > 0 ? sum : '';
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    }
+                },
+                layout: { padding: { top: 15 } },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: { display: false },
+                        ticks: { font: { size: 9 }, color: '#6B7280' }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5] },
+                        ticks: { font: { size: 9 }, color: '#6B7280' }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    // Chart 5: Associate Performance (Treemap)
+    if (document.getElementById('associateTreemap')) {
+        const maxCases = associateData.length > 0 ? Math.max(...associateData.map(d => d.value)) : 10;
+        new Chart(document.getElementById('associateTreemap'), {
+            type: 'treemap',
+            data: {
+                datasets: [{
+                    tree: associateData,
+                    key: 'value',
+                    groups: ['name'],
+                    backgroundColor: (ctx) => {
+                        const item = ctx.raw;
+                        if (!item) return '#f0f9ff';
+                        const value = item.v;
+                        const ratio = value / maxCases;
+                        const lightness = 95 - (ratio * 65);
+                        return `hsl(217, 91%, ${lightness}%)`;
+                    },
+                    labels: {
+                        display: true,
+                        color: (ctx) => (ctx.raw.v / maxCases) > 0.5 ? 'white' : '#1e3a8a',
+                        font: { weight: 'bold', size: 10 },
+                        formatter: (ctx) => [ctx.raw._data.name, `Cases: ${ctx.raw.v}`, `Handles: ${ctx.raw._data.handles}`]
+                    }
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: (items) => items[0].raw._data.name,
+                            label: (item) => [`Cases: ${item.raw.v}`, `Handles: ${item.raw._data.handles}`]
+                        }
+                    },
+                    datalabels: { display: false }
+                }
+            }
+        });
+    }
+
+</script>
+{% endblock %}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Sphere</title>
+    <!-- Use Tailwind CSS with Dark Mode support -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#0F172A',
+                            surface: '#1E293B',
+                            text: '#F1F5F9',
+                            muted: '#94A3B8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script>
+        // Theme Management Logic
+        function updateTheme() {
+            const theme = localStorage.getItem('theme') || 'system';
+            const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function toggleTheme() {
+            // If current is dark, switch to light. Else dark.
+            const isDark = document.documentElement.classList.contains('dark');
+            const newTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            updateTheme();
+        }
+
+        // Initialize theme on load
+        updateTheme();
+
+        // Listen for system changes if mode is system
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (!localStorage.getItem('theme') || localStorage.getItem('theme') === 'system') updateTheme();
+        });
+    </script>
+</head>
+
+<body
+    class="bg-gray-50 text-gray-900 dark:bg-dark-bg dark:text-dark-text h-screen flex flex-col overflow-hidden transition-colors duration-200">
+
+    {% if session.get('user') %}
+    <nav class="bg-white dark:bg-dark-surface shadow-sm border-b border-gray-200 dark:border-gray-700 flex-none">
+        <div class="w-full px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Brand -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-2">
+
+                        <div
+                            class="h-8 w-8 bg-white dark:bg-black rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                            <img src="{{ url_for('static', filename='img/sentiment_sphere_logo.png') }}"
+                                alt="Sentiment Sphere" class="h-6 w-6 object-contain">
+                        </div>
+                        <div class="flex flex-col leading-tight">
+                            <h1
+                                class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-400 dark:from-indigo-400 dark:to-indigo-300">
+                                Sentiment Sphere</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side Actions -->
+                <div class="flex items-center space-x-4">
+
+                    <!-- Theme Toggle (Sun/Moon) -->
+                    <button id="theme-toggle" onclick="toggleTheme()"
+                        class="p-2 rounded-full text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-amber-400 transition-colors focus:outline-none ring-offset-2 focus:ring-2 focus:ring-indigo-500 dark:ring-offset-slate-900">
+                        <!-- Sun Icon (Visible in Light Mode) -->
+                        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 block dark:hidden"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <!-- Moon Icon (Visible in Dark Mode) -->
+                        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden dark:block"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </button>
+
+                    <!-- Notification Bell -->
+                    <div class="relative group mr-2">
+                        <button id="notificationBtn"
+                            class="p-2 rounded-full text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <!-- Badge -->
+                            <span id="notifBadge"
+                                class="hidden absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white dark:ring-dark-surface bg-red-500"></span>
+                        </button>
+                    </div>
+
+
+
+                    <!-- Separator -->
+                    <div class="h-6 w-px bg-gray-200 dark:bg-gray-700"></div>
+
+                    <!-- Logout Icon -->
+                    <a href="{{ url_for('logout') }}" title="Logout"
+                        class="p-2 rounded-full text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="flex-grow flex flex-col min-h-0 w-full px-4 sm:px-6 lg:px-8 py-2 overflow-hidden">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast"
+        class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-indigo-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+                <h4 class="font-bold">New Comments!</h4>
+                <p class="text-sm opacity-90"><span id="newCountVal">0</span> new comments found.</p>
+            </div>
+            <button onclick="window.location.reload()"
+                class="ml-4 bg-white text-indigo-600 px-3 py-1 rounded text-xs font-bold uppercase hover:bg-indigo-50 transition-colors pointer-events-auto">
+                Refresh
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function showToast(count) {
+            const toast = document.getElementById('toast');
+            document.getElementById('newCountVal').textContent = count;
+            const badge = document.getElementById('notifBadge');
+            if (badge) badge.classList.remove('hidden');
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            // Auto hide after 5s
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 8000);
+        }
+
+        // Poll every 60 seconds
+        setInterval(() => {
+            fetch('/api/check_updates')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.new > 0) {
+                        showToast(data.new);
+                    }
+                })
+                .catch(err => console.error('Auto-sync failed', err));
+        }, 60000);
+    </script>
+</body>
+
+</html>

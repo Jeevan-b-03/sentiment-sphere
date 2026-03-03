@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.tox/
+.nox/
+.coverage
+.pytest_cache/
+htmlcov/
+.mypy_cache/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Environment variables / secrets
+.env
+*.env
+config.py
+secrets.py
+
+# SQLite database
+*.db
+*.sqlite3
+instance/
+
+# Flask
+flask_session/
+
+# Logs
+*.log
+logs/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Debug / temp output files
+check_token_output.txt
+debug_permissions.json
+token_stats.json
+all_ids.txt

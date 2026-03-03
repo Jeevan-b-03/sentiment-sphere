@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto w-full h-full flex flex-col p-4 sm:p-6 lg:p-8 overflow-y-auto">
+
+    <!-- Header -->
+    <div class="mb-6 flex justify-between items-center flex-none">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Analytics Dashboard</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">visual insights into sentiment, resolution, and
+                performance.</p>
+        </div>
+        <a href="{{ url_for('index') }}"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-md transition-colors">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+        <!-- 1. Sentiment Trend -->
+        <div class="bg-white dark:bg-dark-surface rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sentiment Trend Over Time</h3>
+            <canvas id="sentimentChart"></canvas>
+        </div>
+
+        <!-- 2. Resolution Timeline -->
+        <div class="bg-white dark:bg-dark-surface rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Case Resolution Timeline</h3>
+            <canvas id="resolutionChart"></canvas>
+            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">New Cases vs. Cases Resolved</p>
+        </div>
+
+        <!-- 3. Associate Performance -->
+        <div
+            class="bg-white dark:bg-dark-surface rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 lg:col-span-2">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Associate Performance (Cases Logged)
+            </h3>
+            <div class="h-64">
+                <canvas id="associateChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Common Chart Options for Dark Mode Support
+    Chart.defaults.color = document.documentElement.classList.contains('dark') ? '#94A3B8' : '#64748B';
+    Chart.defaults.borderColor = document.documentElement.classList.contains('dark') ? '#334155' : '#E2E8F0';
+
+    // 1. Sentiment Chart
+    const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+    new Chart(sentimentCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates | safe }},
+        datasets: [
+        {
+            label: 'Positive',
+            data: {{ pos_trend | safe }},
+        borderColor: '#10B981', // Emerald 500
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        tension: 0.3,
+        fill: true
+                },
+        {
+            label: 'Negative',
+            data: {{ neg_trend | safe }},
+        borderColor: '#EF4444', // Red 500
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        tension: 0.3,
+        fill: true
+                },
+        {
+            label: 'Neutral',
+            data: {{ neu_trend | safe }},
+        borderColor: '#64748B', // Slate 500
+        backgroundColor: 'rgba(100, 116, 139, 0.1)',
+        tension: 0.3,
+        fill: true
+                }
+    ]
+        },
+        options: {
+        responsive: true,
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        }
+    }
+    });
+
+    // 2. Resolution Chart
+    const resolutionCtx = document.getElementById('resolutionChart').getContext('2d');
+    new Chart(resolutionCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ res_dates | safe }},
+        datasets: [
+        {
+            label: 'New Comments',
+            data: {{ new_cases_trend | safe }},
+        backgroundColor: '#6366F1', // Indigo 500
+                },
+        {
+            label: 'Resolved (Action Taken)',
+            data: {{ resolved_trend | safe }},
+        backgroundColor: '#10B981', // Emerald 500
+                }
+    ]
+        },
+        options: {
+        responsive: true,
+        scales: {
+            x: { stacked: false },
+            y: { stacked: false }
+        }
+    }
+    });
+
+    // 3. Associate Chart
+    const associateCtx = document.getElementById('associateChart').getContext('2d');
+    new Chart(associateCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ assoc_names | safe }},
+        datasets: [{
+            label: 'Cases Logged',
+            data: {{ assoc_counts | safe }},
+        backgroundColor: [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+            'rgba(255, 159, 64, 0.8)'
+        ],
+        borderWidth: 1
+            }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+    });
+</script>
+{% endblock %}
