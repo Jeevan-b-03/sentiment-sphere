@@ -91,6 +91,8 @@ sentiment-sphere/
 ├── sentiment_engine.py     # FB API fetch + NLTK sentiment analysis
 ├── requirements.txt        # Python dependencies
 ├── Dockerfile
+├── README.md
+├── .gitignore
 ├── templates/
 │   ├── base.html           # Base layout
 │   ├── dashboard.html      # Main triage dashboard
